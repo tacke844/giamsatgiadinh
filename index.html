@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần mềm quản lý điện thoại</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .app-icon {
+            transition: all 0.3s ease;
+            aspect-ratio: 1/1;
+            /* Make it square */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .app-icon:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen"
+    style="background-image: url('images/bg1.jpg'); background-size: cover; background-position: center;">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">PHẦN MỀM QUẢN LÝ ĐIỆN THOẠI</h1>
+        </header>
+
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 bg-white rounded-xl p-3">
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/fb-logo.png" alt="Phone Manager" data-name="Phone Manager">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/mess-logo.png" alt="Sync Mobile" data-name="Sync Mobile">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer zalo-btn">
+                <img src="images/zalo-logo.webp" alt="Backup Pro" data-name="zalo">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/wechat-logo.png" alt="Battery Care" data-name="Battery Care">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/viber-logo.png" alt="Mobile Security" data-name="Mobile Security">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/tele-logo.png" alt="Network Tools" data-name="Network Tools">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/chat-logo.jpg" alt="RAM Booster" data-name="RAM Booster">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/sms-logo.jpg" alt="Clean Master" data-name="Clean Master">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/insta-logo.jpg" alt="File Explorer" data-name="File Explorer">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/map-logo.jpg" alt="Cloud Sync" data-name="Cloud Sync">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/hand-logo.jpg" alt="Gallery Pro" data-name="Gallery Pro">
+            </div>
+            <div class="app-icon bg-white rounded-xl shadow-md cursor-pointer">
+                <img src="images/X_logo_2023.svg.png" alt="Audio Manager" data-name="Audio Manager">
+            </div>
+        </div>
+
+        <footer class="mt-16 text-center text-gray-500 text-sm">
+            <p>© 2023 Phần mềm quản lý điện thoại. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div id="zalo-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg w-80 shadow-lg">
+            <!-- Thanh tiến độ -->
+            <div id="loading-container" class="hidden mt-4">
+                <div class="text-sm mb-2">Đang đăng nhập...</div>
+                <div class="w-full bg-gray-200 h-2 rounded-full">
+                    <div id="loading-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                </div>
+                <div id="loading-percent" class="text-right text-sm mt-1">0%</div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                <div class="flex items-center border rounded-md relative">
+                    <button id="country-select" class="flex items-center px-3 bg-gray-200">
+                        <img id="country-flag" src="images/icon/us.png" alt="USA" class="w-5 h-5 mr-1">
+                        <span id="country-code">+1</span>
+                    </button>
+                    <div id="dropdown-container"
+                        class="absolute left-0 top-full bg-white shadow-md rounded-md hidden w-60 z-10">
+                        <input type="text" id="search-country" placeholder="Tìm kiếm quốc gia..."
+                            class="w-full p-2 border-b outline-none">
+                        <ul id="country-list" class="max-h-48 overflow-y-auto"></ul>
+                    </div>
+                    <input type="text" id="phone-input" class="flex-1 p-2 outline-none"
+                        placeholder="Nhập số điện thoại">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Mã phần mềm</label>
+                <input type="password" id="ma-phan-mem" class="w-full border rounded-md p-2"
+                    placeholder="Nhập mã phần mềm">
+            </div>
+            <button id="login-btn" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">
+                Đăng nhập
+            </button>
+            <button id="close-modal" class="mt-2 text-gray-500 w-full py-1">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        const zaloBtn = document.querySelector(".zalo-btn");
+        const modal = document.getElementById("zalo-modal");
+        const closeModal = document.getElementById("close-modal");
+
+        zaloBtn.addEventListener("click", () => {
+            modal.classList.remove("hidden");
+        });
+
+        closeModal.addEventListener("click", () => {
+            modal.classList.add("hidden");
+        });
+    </script>
+    <script>
+        let countries = [];
+
+        fetch("countries_code.json")
+            .then(response => response.json())
+            .then(data => {
+                countries = data;
+                renderCountryList();
+            })
+            .catch(error => console.error("Lỗi tải dữ liệu quốc gia:", error));
+
+        const countrySelect = document.getElementById("country-select");
+        const countryList = document.getElementById("country-list");
+        const searchCountry = document.getElementById("search-country");
+        const dropdownContainer = document.getElementById("dropdown-container");
+        const countryFlag = document.getElementById("country-flag");
+        const countryCode = document.getElementById("country-code");
+        const btnLogin = document.getElementById("login-btn");
+
+        function renderCountryList(filter = "") {
+            countryList.innerHTML = "";
+            countries.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()))
+                .forEach(c => {
+                    const li = document.createElement("li");
+                    li.classList.add("flex", "items-center", "px-3", "py-2", "cursor-pointer", "hover:bg-gray-100");
+                    li.dataset.code = c.dial_code;
+                    li.dataset.flag = `images/icon/${c.code}.png`;
+                    li.innerHTML = `<img src="images/icon/${c.code}.png" alt="${c.code}" class="w-5 h-5 mr-2"> ${c.name} (${c.dial_code})`;
+                    li.addEventListener("click", () => {
+                        countryFlag.src = `images/icon/${c.code}.png`;
+                        countryCode.textContent = c.dial_code;
+                        dropdownContainer.classList.add("hidden");
+                    });
+                    countryList.appendChild(li);
+                });
+        }
+
+        countrySelect.addEventListener("click", () => {
+            console.log("country");
+            dropdownContainer.classList.toggle("hidden");
+            renderCountryList();
+        });
+
+        searchCountry.addEventListener("input", (e) => {
+            renderCountryList(e.target.value);
+        });
+
+        document.addEventListener("click", (event) => {
+            if (!countrySelect.contains(event.target) && !dropdownContainer.contains(event.target)) {
+                dropdownContainer.classList.add("hidden");
+            }
+        });
+
+
+    </script>
+    <script>
+        const loginBtn = document.getElementById("login-btn");
+        const loadingContainer = document.getElementById("loading-container");
+        const loadingBar = document.getElementById("loading-bar");
+        const loadingPercent = document.getElementById("loading-percent");
+        const maPM = document.getElementById("ma-phan-mem");
+        const phoneInput = document.getElementById("phone-input");
+
+        loginBtn.addEventListener("click", async () => {
+            // kiểm tra mã code
+            const inputCode = maPM.value.trim();
+            const phone = phoneInput.value.trim();
+
+            // Validate số điện thoại
+            if (!/^\d{9,10}$/.test(phone)) {
+                alert("Số điện thoại không đúng định dạng");
+                return;
+            }
+            if (!inputCode) {
+                alert("Vui lòng nhập mã phần mềm.");
+                return;
+            }
+
+            try {
+                const res = await fetch("https://67ef3813c11d5ff4bf7c0e38.mockapi.io/ma-code");
+                const data = await res.json();
+                const allowedCodes = data[0]; // chỉ lấy phần tử đầu tiên như yêu cầu
+
+                if (inputCode === allowedCodes.code1) {
+                    // ✅ Mã đúng → bắt đầu loading
+                    loadingContainer.classList.remove("hidden");
+
+                    let percent = 0;
+                    const interval = setInterval(() => {
+                        percent += 1;
+                        loadingBar.style.width = `${percent}%`;
+                        loadingPercent.textContent = `${percent}%`;
+
+                        if (percent >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                window.location.href = "/goi-su-dung";
+                                loadingContainer.classList.add("hidden");
+                            }, 500);
+                        }
+                    }, 50);
+
+                } else {
+                    // ❌ Mã sai
+                    alert("Mã phần mềm không chính xác. Vui lòng thử lại.");
+                }
+
+            } catch (error) {
+                console.error("Lỗi khi kiểm tra mã phần mềm:", error);
+                alert("Có lỗi xảy ra khi kiểm tra mã. Vui lòng thử lại sau.");
+            }
+        });
+
+    </script>
+</body>
+
+</html>

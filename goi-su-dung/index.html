@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Gói Đăng Ký</title>
+</head>
+
+<body class="flex justify-center min-h-screen"
+    style="background-image: url('../images/bg1.jpg'); background-size: cover; background-position: center;">
+
+    <div class="w-full max-w-md space-y-4 mt-10">
+        <div class="bg-white p-4 m-4 rounded-lg shadow-md text-center">
+            <h2 class="font-bold text-lg">GÓI ĐĂNG KÝ SỬ DỤNG 12 THÁNG</h2>
+            <button class="mt-3 bg-purple-500 text-white py-2 px-6 rounded-full open-modal">ĐĂNG KÝ NGAY</button>
+        </div>
+        <div class="bg-white p-4 m-4 rounded-lg shadow-md text-center">
+            <h2 class="font-bold text-lg">GÓI ĐĂNG KÝ SỬ DỤNG 24 THÁNG</h2>
+            <button class="mt-3 bg-purple-500 text-white py-2 px-6 rounded-full open-modal">ĐĂNG KÝ NGAY</button>
+        </div>
+        <div class="bg-white p-4 m-4 rounded-lg shadow-md text-center">
+            <h2 class="font-bold text-lg">GÓI ĐĂNG KÝ SỬ DỤNG 5 NĂM</h2>
+            <button class="mt-3 bg-purple-500 text-white py-2 px-6 rounded-full open-modal">ĐĂNG KÝ NGAY</button>
+        </div>
+        <div class="bg-white p-4 m-4 rounded-lg shadow-md text-center">
+            <h2 class="font-bold text-lg">GÓI ĐĂNG KÝ SỬ DỤNG VĨNH VIỄN</h2>
+            <button class="mt-3 bg-purple-500 text-white py-2 px-6 rounded-full open-modal">ĐĂNG KÝ NGAY</button>
+        </div>
+    </div>
+
+    <!-- Modal Nhập Mã -->
+    <div id="codeModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+            <h2 class="text-lg font-bold mb-2">Nhập mã code</h2>
+            <input type="password" id="codeInput" class="border p-2 w-full mb-4 text-center" placeholder="Nhập mã code">
+            <button id="confirmCode" class="bg-blue-500 text-white px-6 py-2 rounded">Xác nhận</button>
+        </div>
+    </div>
+
+    <!-- Loading Bar -->
+    <div id="loadingContainer" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
+            <h2 class="text-lg font-bold mb-2">Đang xử lý...</h2>
+            <div class="w-full bg-gray-300 h-4 rounded-full">
+                <div id="loadingBar" class="bg-blue-500 h-4 rounded-full text-center text-white text-sm leading-4"
+                    style="width: 0%;">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const openButtons = document.querySelectorAll('.open-modal');
+        const codeModal = document.getElementById('codeModal');
+        const codeInput = document.getElementById('codeInput');
+        const confirmCode = document.getElementById('confirmCode');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingBar = document.getElementById('loadingBar');
+
+        let matchedCode = ''; // lưu code xác nhận được từ API
+
+        // Mở modal nhập mã code
+        openButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                codeModal.classList.remove('hidden');
+                codeInput.value = '';
+                matchedCode = '';
+            });
+        });
+        // Khi nhấn xác nhận mã code
+        confirmCode.addEventListener('click', async () => {
+            const inputValue = codeInput.value.trim();
+
+            if (inputValue === '') {
+                alert("Vui lòng nhập mã code!");
+                return;
+            }
+
+            try {
+                const res = await fetch("https://67ef3813c11d5ff4bf7c0e38.mockapi.io/ma-code");
+                const data = await res.json();
+
+                if (data.length > 0) {
+                    const { code2, code3 } = data[0];
+
+                    if (inputValue === code2) {
+                        matchedCode = 'code2';
+                    } else if (inputValue === code3) {
+                        matchedCode = 'code3';
+                    } else {
+                        alert("Mã code không hợp lệ!");
+                        return;
+                    }
+
+                    codeModal.classList.add('hidden');
+                    startLoading();
+
+                } else {
+                    alert("Không lấy được dữ liệu từ máy chủ.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi gọi API:", error);
+                alert("Đã xảy ra lỗi khi xác thực mã code.");
+            }
+        });
+
+        // Hàm bắt đầu loading từ 1% đến 100%
+        function startLoading() {
+            loadingContainer.classList.remove('hidden');
+            let progress = 0;
+
+            let interval = setInterval(() => {
+                progress++;
+                loadingBar.style.width = progress + "%";
+                loadingBar.textContent = progress + "%";
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (matchedCode === 'code2') {
+                            window.location.href = "/loading";
+                        } else if (matchedCode === 'code3') {
+                            window.location.href = "/zalo"; // chuyển thẳng tới /zalo
+                        }
+                        
+                    }, 500);
+                }
+            }, 50); // tốc độ loading
+        }
+    </script>
+</body>
+
+</html>
