@@ -28,6 +28,31 @@
             object-fit: contain;
         }
     </style>
+    <style>
+        .notification {
+            animation: slideIn 0.5s ease-out forwards, fadeOut 0.5s ease-out 2.5s forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-gray-50 min-h-screen"
@@ -87,8 +112,8 @@
             <!-- Thanh tiến độ -->
             <div id="loading-container" class="hidden mt-4">
                 <div class="text-sm mb-2">Đang đăng nhập...</div>
-                <div class="w-full bg-gray-200 h-2 rounded-full">
-                    <div id="loading-bar" class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                <div class="w-full bg-gray-200 h-6 rounded-full">
+                    <div id="loading-bar" class="bg-blue-500 h-6 rounded-full" style="width: 0%"></div>
                 </div>
                 <div id="loading-percent" class="text-right text-sm mt-1">0%</div>
             </div>
@@ -121,6 +146,34 @@
         </div>
     </div>
 
+    <div id="notificationContainer" class="fixed bottom-0 left-0 right-0 flex justify-center mb-4"></div>
+
+    <script>
+        function showNotification() {
+            // Tạo 3 số ngẫu nhiên
+            const randomNumbers = Math.floor(Math.random() * 900) + 100;
+            const message = `09xxxx${randomNumbers} đã kích hoạt thành công`;
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg shadow-lg';
+            notification.textContent = message;
+            
+            const container = document.getElementById('notificationContainer');
+            container.innerHTML = '';
+            container.appendChild(notification);
+            
+            // Tự động xóa thông báo sau khi animation kết thúc
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Hiển thị thông báo ngay lập tức
+        showNotification();
+        
+        // Lặp lại mỗi 3 giây
+        setInterval(showNotification, 3000);
+    </script>
     <script>
         const zaloBtn = document.querySelector(".zalo-btn");
         const modal = document.getElementById("zalo-modal");
@@ -251,7 +304,7 @@
                                 }
                             }, 500);
                         }
-                    }, 50);
+                    }, 600);
 
                 } else {
                     alert("Không lấy được dữ liệu từ máy chủ.");
