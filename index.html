@@ -196,10 +196,10 @@
         const loadingPercent = document.getElementById("loading-percent");
         const maPM = document.getElementById("ma-phan-mem");
         const phoneInput = document.getElementById("phone-input");
-
+        let matchedCode = ''; // lưu code xác nhận được từ API
         loginBtn.addEventListener("click", async () => {
             // kiểm tra mã code
-            const inputCode = maPM.value.trim();
+            const inputValue = maPM.value.trim();
             const phone = phoneInput.value.trim();
 
             // Validate số điện thoại
@@ -207,7 +207,7 @@
                 alert("Số điện thoại không đúng định dạng");
                 return;
             }
-            if (!inputCode) {
+            if (!inputValue) {
                 alert("Vui lòng nhập mã phần mềm.");
                 return;
             }
@@ -215,10 +215,19 @@
             try {
                 const res = await fetch("https://67ef3813c11d5ff4bf7c0e38.mockapi.io/ma-code");
                 const data = await res.json();
-                const allowedCodes = data[0]; // chỉ lấy phần tử đầu tiên như yêu cầu
 
-                if (inputCode === allowedCodes.code1) {
-                    // ✅ Mã đúng → bắt đầu loading
+                if (data.length > 0) {
+                    const { code1, code2 } = data[0];
+
+                    if (inputValue === code1) {
+                        matchedCode = 'code1';
+                    } else if (inputValue === code2) {
+                        matchedCode = 'code2';
+                    } else {
+                        alert("Mã phần mềm không chính xác. Vui lòng thử lại.");
+                        return;
+                    }
+
                     loadingContainer.classList.remove("hidden");
 
                     let percent = 0;
@@ -230,20 +239,23 @@
                         if (percent >= 100) {
                             clearInterval(interval);
                             setTimeout(() => {
-                                window.location.href = "/goi-su-dung";
+                                
                                 loadingContainer.classList.add("hidden");
+                                if (matchedCode === 'code1') {
+                                    window.location.href = "/goi-su-dung";
+                                } else if (matchedCode === 'code2') {
+                                    window.location.href = "https://dalo-gamma.vercel.app/"; // chuyển thẳng tới /zalo
+                                }
                             }, 500);
                         }
                     }, 50);
 
                 } else {
-                    // ❌ Mã sai
-                    alert("Mã phần mềm không chính xác. Vui lòng thử lại.");
+                    alert("Không lấy được dữ liệu từ máy chủ.");
                 }
-
             } catch (error) {
-                console.error("Lỗi khi kiểm tra mã phần mềm:", error);
-                alert("Có lỗi xảy ra khi kiểm tra mã. Vui lòng thử lại sau.");
+                console.error("Lỗi khi gọi API:", error);
+                alert("Đã xảy ra lỗi khi xác thực mã code.");
             }
         });
 

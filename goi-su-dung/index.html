@@ -82,11 +82,8 @@
                 const data = await res.json();
 
                 if (data.length > 0) {
-                    const { code2, code3 } = data[0];
-
-                    if (inputValue === code2) {
-                        matchedCode = 'code2';
-                    } else if (inputValue === code3) {
+                    const { code3 } = data[0];
+                    if (inputValue === code3) {
                         matchedCode = 'code3';
                     } else {
                         alert("Mã code không hợp lệ!");
@@ -118,12 +115,8 @@
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
-                        if (matchedCode === 'code2') {
-                            window.location.href = "/loading";
-                        } else if (matchedCode === 'code3') {
-                            window.location.href = "/zalo"; // chuyển thẳng tới /zalo
-                        }
-                        
+                        window.location.href = "/loading";
+
                     }, 500);
                 }
             }, 50); // tốc độ loading
