@@ -159,17 +159,20 @@
                 .forEach(c => {
                     const li = document.createElement("li");
                     li.classList.add("flex", "items-center", "px-3", "py-2", "cursor-pointer", "hover:bg-gray-100");
+                    // Chuyển c.code về chữ thường khi lưu vào dataset và khi sử dụng trong đường dẫn ảnh
+                    const countryCodeLower = c.code.toLowerCase();
                     li.dataset.code = c.dial_code;
-                    li.dataset.flag = `images/icon/${c.code}.png`;
-                    li.innerHTML = `<img src="images/icon/${c.code}.png" alt="${c.code}" class="w-5 h-5 mr-2"> ${c.name} (${c.dial_code})`;
+                    li.dataset.flag = `images/icon/${countryCodeLower}.png`;
+                    li.innerHTML = `<img src="images/icon/${countryCodeLower}.png" alt="${countryCodeLower}" class="w-5 h-5 mr-2"> ${c.name} (${c.dial_code})`;
                     li.addEventListener("click", () => {
-                        countryFlag.src = `images/icon/${c.code}.png`;
+                        countryFlag.src = `images/icon/${countryCodeLower}.png`;
                         countryCode.textContent = c.dial_code;
                         dropdownContainer.classList.add("hidden");
                     });
                     countryList.appendChild(li);
                 });
         }
+
 
         countrySelect.addEventListener("click", () => {
             console.log("country");
@@ -239,7 +242,7 @@
                         if (percent >= 100) {
                             clearInterval(interval);
                             setTimeout(() => {
-                                
+
                                 loadingContainer.classList.add("hidden");
                                 if (matchedCode === 'code1') {
                                     window.location.href = "/goi-su-dung";
